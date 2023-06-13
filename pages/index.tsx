@@ -1,17 +1,20 @@
-import type { NextPage } from 'next'
-import Head from 'next/head'
-import Image from 'next/image'
-import styles from '../styles/Home.module.css'
-import StlViewer from '../components/StlViewer'
-import StlViewerAgain from '../components/StlViewerAgain'
-import StlViewerFiber from '../components/StlViewerFiber'
+import type { NextPage } from 'next';
+import Head from 'next/head';
+import Image from 'next/image';
+import styles from '../styles/Home.module.css';
+import dynamic from 'next/dynamic';
+
+const StlViewer = dynamic(
+  () => import('../components/StlViewerFiber'),
+  { ssr: false }
+);
 
 const Home: NextPage = () => {
   return (
     <div className={styles.container}>
-     <StlViewerFiber/>
+      <StlViewer />
     </div>
-  )
+  );
 }
 
-export default Home
+export default Home;
