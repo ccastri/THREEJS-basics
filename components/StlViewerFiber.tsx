@@ -3,7 +3,7 @@ import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
 import { STLLoader } from 'three/examples/jsm/loaders/STLLoader';
 import *as dat from 'dat.gui'
-
+import Stats from 'three/examples/jsm/libs/stats.module'
 
 const StlViewer = () => {
   
@@ -57,11 +57,11 @@ scene.add(lightBack);
     const stlFiles = ['Head.stl', 'Thing.stl', 'Body.stl', 'Hands.stl', 'Legs.stl'];
     
     const loadedModels: any[] = [];
-    
+      let mesh: any; 
     const loadSTL = (stlFile: string, index: number) => {
       //  const folder = new THREE.Group();
       loader.load(`/${stlFile}`, (geometry) => {
-        const mesh = new THREE.Mesh(geometry, material);
+        mesh = new THREE.Mesh(geometry, material);
         
         // Apply individual transformations to each mesh
         // switch (index) {
@@ -143,6 +143,7 @@ let defaultRotation = {
           calculateAndApplyTransformations();
           render();
         }
+        // return mesh
       }, undefined, (error) => {
         console.error(`Error loading STL file '${stlFile}':`, error);
       });
@@ -174,11 +175,20 @@ let defaultRotation = {
 
     window.addEventListener('resize', onWindowResize, false);
 
+const stats = new Stats()
+document.body.appendChild(stats.dom)
     const animate = () => {
       // Para los frames del Orbit controls.
       // SCROLLING O ZOOM IN AND ZOOM OUT
       requestAnimationFrame(animate);
+      loadedModels.forEach(model=>
+        {
+
+          model.rotation.x += 0.01
+          model.rotation.y += 0.01
+        })
       controls.update();
+        stats.update()
       render();
     };
 
@@ -191,7 +201,7 @@ let defaultRotation = {
     });
 
     animate();
-
+// Clean up...
     return () => {
       window.removeEventListener('resize', onWindowResize);
       gui.destroy()
