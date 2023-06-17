@@ -22,11 +22,11 @@ const StlViewer = () => {
             
     // Dentro de la función useEffect
 const lightFront = new THREE.SpotLight(0xffffff); // Luz frontal
-lightFront.position.set(0, 20, 200); // Posición en el frente
+lightFront.position.set(0, 20, -20); // Posición en el frente
 scene.add(lightFront);
 
 const lightBack = new THREE.SpotLight(0xffffff); // Luz trasera
-lightBack.position.set(0, -20, -200); // Posición en la parte trasera
+lightBack.position.set(0, 20, -20); // Posición en la parte trasera
 scene.add(lightBack);
 
     const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -37,13 +37,14 @@ scene.add(lightBack);
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.body.appendChild(renderer.domElement);
-
+    
     const controls = new OrbitControls(camera, renderer.domElement);
     
-    controls.target.y =5
-    controls.target.x =-15 
+    // controls.target.set()
+    
     controls.enableDamping = true;
-
+    const grid = new THREE.GridHelper()
+    scene.add(grid)
     const material = new THREE.MeshStandardMaterial({
       color: 0xbbb2ffc8,
       metalness: 0.25,
@@ -105,13 +106,13 @@ let defaultRotation = {
   z: mesh.rotation.z
 };
       const positionsFolder = gui.addFolder(`${fileName} - Positions`);
-          positionsFolder.add(mesh.position, 'x').min(-100).max(100).step(0.5).name(`${fileName} - Pos X`).onChange(() => defaultPosition.x = mesh.position.x);
-          positionsFolder.add(mesh.position, 'y').min(-100).max(100).step(0.5).name(`${fileName} - Pos Y`).onChange(() => defaultPosition.y = mesh.position.y);
-          positionsFolder.add(mesh.position, 'z').min(-100).max(100).step(0.5).name(`${fileName} - Pos Z`).onChange(() => defaultPosition.z = mesh.position.z)
+          positionsFolder.add(mesh.position, 'x').min(-10).max(10).step(0.01).name(`${fileName} - Pos X`).onChange(() => defaultPosition.x = mesh.position.x);
+          positionsFolder.add(mesh.position, 'y').min(-10).max(10).step(0.01).name(`${fileName} - Pos Y`).onChange(() => defaultPosition.y = mesh.position.y);
+          positionsFolder.add(mesh.position, 'z').min(-10).max(10).step(0.01).name(`${fileName} - Pos Z`).onChange(() => defaultPosition.z = mesh.position.z)
                 const rotationsFolder = gui.addFolder(`${fileName} - Rotations`);
-          rotationsFolder.add(mesh.rotation, 'x',0, 2*Math.PI).name(`${fileName} - Rot X`).onChange(() => defaultRotation.x = mesh.rotation.x);
-          rotationsFolder.add(mesh.rotation, 'y',0, 2*Math.PI).name(`${fileName} - Rot Y`).onChange(() => defaultRotation.y = mesh.rotation.y);
-          rotationsFolder.add(mesh.rotation, 'z',0, 2*Math.PI).name(`${fileName} - Rot Z`).onChange(() => defaultRotation.z = mesh.rotation.z)
+          rotationsFolder.add(mesh.rotation, 'x',0, 360).name(`${fileName} - Rot X`).onChange(() => defaultRotation.x = mesh.rotation.x *  (180 / Math.PI));
+          rotationsFolder.add(mesh.rotation, 'y',0, 360).name(`${fileName} - Rot Y`).onChange(() => defaultRotation.y = mesh.rotation.y *  (180 / Math.PI));
+          rotationsFolder.add(mesh.rotation, 'z',0, 2*Math.PI).name(`${fileName} - Rot Z`).onChange(() => defaultRotation.z = mesh.rotation.z *  (180 / Math.PI))
     
     
     
@@ -155,14 +156,18 @@ let defaultRotation = {
 
       const center = boundingBox.getCenter(new THREE.Vector3());
       const size = boundingBox.getSize(new THREE.Vector3());
-
+console.log(center)
       loadedModels.forEach((model) => {
         // Scale the model to fit within a certain size
-        const scaleFactor = 100 / Math.max(size.x, size.y, size.z);
+        const scaleFactor = 2 / Math.max(size.x, size.y, size.z);
         model.scale.set(scaleFactor, scaleFactor, scaleFactor);
 
-        // Position the model at the scene center
-        model.position.sub(center);
+               // Position the model at the scene center
+ const positionOffset = new THREE.Vector3();
+    positionOffset.subVectors(center, new THREE.Vector3(46.50000287403856,
+70.04265746507652,
+15.235782109828362)); // Replace (0, 0, 0) with the desired screen center coordinates
+    model.position.sub(positionOffset);
       });
     };
 
@@ -181,11 +186,14 @@ document.body.appendChild(stats.dom)
       // Para los frames del Orbit controls.
       // SCROLLING O ZOOM IN AND ZOOM OUT
       requestAnimationFrame(animate);
+
+      // Element rotation
       loadedModels.forEach(model=>
         {
 
           model.rotation.x += 0.01
           model.rotation.y += 0.01
+
         })
       controls.update();
         stats.update()
