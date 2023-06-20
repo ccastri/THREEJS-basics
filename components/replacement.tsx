@@ -1,151 +1,251 @@
-import React, { useRef, useEffect } from 'react';
-import * as THREE from 'three';
-import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
-import { STLLoader } from 'three/examples/jsm/loaders/STLLoader';
+// import React, { useEffect } from 'react';
+// import * as THREE from 'three';
+// import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls';
+// import { STLLoader } from 'three/examples/jsm/loaders/STLLoader';
+// import *as dat from 'dat.gui'
+// import Stats from 'three/examples/jsm/libs/stats.module'
 
-const Scene = () => {
-  const mountRef = useRef<HTMLDivElement | null>(null);
-  const sceneRef = useRef<THREE.Scene | null>(null);
-  const rendererRef = useRef<THREE.WebGLRenderer | null>(null);
-  const controlsRef = useRef<OrbitControls | null>(null);
-  const stlFiles = ['Head.stl', 'Thing.stl', 'Body.stl', 'Hands.stl', 'Legs.stl'];
-  const loadedModelsRef = useRef<THREE.Mesh[]>([]);
+// const StlViewer = () => {
+  
+//   //   
+//   const initScene = () => {
+//     const gui= new dat.GUI()
+//           const scene = new THREE.Scene();
+//           scene.add(new THREE.AxesHelper(5));
+          
+//           const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
+//           camera.position.z= 15;
+//           scene.add(camera);
+          
+//           const renderer = new THREE.WebGLRenderer();
+//           renderer.outputColorSpace = THREE.SRGBColorSpace;
+//           renderer.setSize(window.innerWidth, window.innerHeight);
+//           document.body.appendChild(renderer.domElement);
+          
+//           const controls = new OrbitControls(camera, renderer.domElement);
+          
+//           controls.target.y =5
+//           controls.target.x =-15 
+//           controls.enableDamping = true;
+//           return { scene, camera, renderer, controls, gui };
+//   }            
+  
+//   const setUpLights = (scene:any) =>{
+  
+//     const lightFront = new THREE.SpotLight(0xffffff); // Luz frontal
+//     lightFront.position.set(0, 20, 200); // Posición en el frente
+//     scene.add(lightFront);
+    
+//     const lightBack = new THREE.SpotLight(0xffffff); // Luz trasera
+//     lightBack.position.set(0, -20, -200); // Posición en la parte trasera
+//     scene.add(lightBack);
+//   }
 
-  useEffect(() => {
-    const mountScene = () => {
-      if (!mountRef.current) return;
 
-      const scene = new THREE.Scene();
-      scene.add(new THREE.AxesHelper(5));
-      sceneRef.current = scene;
+//   useEffect(() => {
+//     const { scene, camera, renderer, controls, gui } = initScene();
+//     setUpLights(scene);
 
-      const lightFront = new THREE.SpotLight(0xffffff);
-      lightFront.position.set(0, 20, 200);
-      scene.add(lightFront);
+//     const Object3D = {
+//       mesh: 2,
+//     };
+            
+//     // Dentro de la función useEffect
 
-      const lightBack = new THREE.SpotLight(0xffffff);
-      lightBack.position.set(0, -20, -200);
-      scene.add(lightBack);
 
-      const camera = new THREE.PerspectiveCamera(75, window.innerWidth / window.innerHeight, 0.1, 1000);
-      camera.position.z = 10;
-      scene.add(camera);
+//  const loadSTLFiles = () => {
+//   const loader = new STLLoader();
+//   const stlFiles = ['Head.stl', 'Thing.stl', 'Body.stl', 'Hands.stl', 'Legs.stl', 'mandible-segmeneted.stl'];
+//   const loadedModels = [];
+//   const material = new THREE.MeshStandardMaterial({
+//     color: 0xbbb2ffc8,
+//     metalness: 0.25,
+//     roughness: 0.1,
+//     transparent: true,
+//     opacity: 1.0,
+//     wireframe: true,
+//   });
 
-      const renderer = new THREE.WebGLRenderer();
-      renderer.outputColorSpace = THREE.SRGBColorSpace;
-      renderer.setSize(window.innerWidth, window.innerHeight);
-      mountRef.current.appendChild(renderer.domElement);
-      rendererRef.current = renderer;
+//   const loadSTL = (stlFile:any, index:any) => {
+//     loader.load(`/${stlFile}`, (geometry) => {
+//       const mesh = new THREE.Mesh(geometry, material);
+//       const fileName = stlFile.split('.')[0];
 
-      const controls = new OrbitControls(camera, renderer.domElement);
-      controls.target.set(-10, 5, 0);
-      controls.enableDamping = true;
-      controlsRef.current = controls;
+//       const addPositionControls = () => {
+//         const defaultPosition = {
+//           x: mesh.position.x,
+//           y: mesh.position.y,
+//           z: mesh.position.z,
+//         };
 
-      const material = new THREE.MeshStandardMaterial({
-        color: 0xbbb2ffc8,
-        metalness: 0.25,
-        roughness: 0.1,
-        transparent: true,
-        opacity: 1.0,
-      });
+//         const positionsFolder = gui.addFolder(`${fileName} - Positions`);
+//         positionsFolder
+//           .add(mesh.position, 'x')
+//           .min(-100)
+//           .max(100)
+//           .step(0.5)
+//           .name(`${fileName} - Pos X`)
+//           .onChange(() => (defaultPosition.x = mesh.position.x));
+//         positionsFolder
+//           .add(mesh.position, 'y')
+//           .min(-100)
+//           .max(100)
+//           .step(0.5)
+//           .name(`${fileName} - Pos Y`)
+//           .onChange(() => (defaultPosition.y = mesh.position.y));
+//         positionsFolder
+//           .add(mesh.position, 'z')
+//           .min(-100)
+//           .max(100)
+//           .step(0.5)
+//           .name(`${fileName} - Pos Z`)
+//           .onChange(() => (defaultPosition.z = mesh.position.z));
+//       };
 
-      const loader = new STLLoader();
-      const loadedModels: THREE.Mesh[] = [];
-      loadedModelsRef.current = loadedModels;
+//       const addRotationControls = () => {
+//         const defaultRotation = {
+//           x: mesh.rotation.x,
+//           y: mesh.rotation.y,
+//           z: mesh.rotation.z,
+//         };
 
-      const loadSTL = (stlFile: string, index: number) => {
-        loader.load(`/${stlFile}`, (geometry) => {
-          const mesh = new THREE.Mesh(geometry, material);
+//         const rotationsFolder = gui.addFolder(`${fileName} - Rotations`);
+//         rotationsFolder
+//           .add(mesh.rotation, 'x', 0, 2 * Math.PI)
+//           .name(`${fileName} - Rot X`)
+//           .onChange(() => (defaultRotation.x = mesh.rotation.x));
+//         rotationsFolder
+//           .add(mesh.rotation, 'y', 0, 2 * Math.PI)
+//           .name(`${fileName} - Rot Y`)
+//           .onChange(() => (defaultRotation.y = mesh.rotation.y));
+//         rotationsFolder
+//           .add(mesh.rotation, 'z', 0, 2 * Math.PI)
+//           .name(`${fileName} - Rot Z`)
+//           .onChange(() => (defaultRotation.z = mesh.rotation.z));
+//       };
 
-          switch (index) {
-            case 2:
-              mesh.scale.set(2, 2, 2);
-              mesh.position.set(8, -4, 10);
-              mesh.rotation.set(0, Math.PI / 2, 3 * (Math.PI / 2));
-              break;
-            case 3:
-              mesh.scale.set(1.5, 0, 1.5);
-              mesh.position.set(0, 0, -80);
-              break;
-            case 0:
-              mesh.scale.set(1.2, 1.2, 1.2);
-              mesh.position.set(0, 0, -25);
-              mesh.rotation.set(Math.PI, (4 * Math.PI) / 3, Math.PI / 2);
-              break;
-            case 4:
-              mesh.scale.set(0, 0, 2);
-              mesh.position.set(0, -20, -2);
-              mesh.rotation.set(0, (3 * Math.PI) / 4, (5 * Math.PI) / 6);
-              break;
-            default:
-              break;
-          }
+//       const addScaleControls = () => {
+//         const meshAux = {
+//           scale: 1.2,
+//           color: 0xffffff,
+//         };
 
-          scene.add(mesh);
-          loadedModels.push(mesh);
+//         gui
+//           .add(meshAux, 'scale', {
+//             Small: 1.2,
+//             Medium: 2.4,
+//             Big: 3.6,
+//           })
+//           .name(`${fileName} - Scale All`)
+//           .onChange(() => {
+//             mesh.scale.set(meshAux.scale, meshAux.scale, meshAux.scale);
+//             colorController.updateDisplay();
+//           });
 
-          if (loadedModels.length === stlFiles.length) {
-            calculateAndApplyTransformations();
-            render();
-          }
-        }, undefined, (error) => {
-          console.error(`Error loading STL file '${stlFile}':`, error);
-        });
-      };
+//         gui
+//           .add(mesh.scale, 'x', {
+//             Small: 1,
+//             Medium: 2,
+//             Big: 3,
+//           })
+//           .name(`${fileName} - Scale X`)
+//           .onChange(() => console.log(Object3D.mesh));
 
-      const calculateAndApplyTransformations = () => {
-        const boundingBox = new THREE.Box3();
-        loadedModels.forEach((model) => boundingBox.expandByObject(model));
+//         const colorController = gui
+//           .addColor(meshAux, 'color')
+//           .name(`${fileName} - Color`)
+//           .onChange(() => {
+//             mesh.material.color.set(meshAux.color);
+//           });
+//       };
 
-        const center = boundingBox.getCenter(new THREE.Vector3());
-        const size = boundingBox.getSize(new THREE.Vector3());
+//       addPositionControls();
+//       addRotationControls();
+//       addScaleControls();
 
-        loadedModels.forEach((model) => {
-          const scaleFactor = 100 / Math.max(size.x, size.y, size.z);
-          model.scale.set(scaleFactor, scaleFactor, scaleFactor);
-          model.position.sub(center);
-        });
-      };
+//       scene.add(mesh);
+//       loadedModels.push(mesh);
 
-      const onWindowResize = () => {
-        camera.aspect = window.innerWidth / window.innerHeight;
-        camera.updateProjectionMatrix();
-        renderer.setSize(window.innerWidth, window.innerHeight);
-        render();
-      };
+//       if (loadedModels.length === stlFiles.length) {
+//         calculateAndApplyTransformations();
+//         render();
+//       }
+//     }, undefined, (error) => {
+//       console.error(`Error loading STL file '${stlFile}':`, error);
+//     });
 
-      window.addEventListener('resize', onWindowResize, false);
+    
+//   };
 
-      const animate = () => {
-        requestAnimationFrame(animate);
-        controls.update();
-        render();
-      };
+//   stlFiles.forEach((stlFile: any, index: number) => {
+//     loadSTL(stlFile, index);
+//   });
+// };
+// const loadedModels: any =[]
+//     const calculateAndApplyTransformations = () => {
+//       const boundingBox = new THREE.Box3();
+//       loadedModels.forEach((model: any) => boundingBox.expandByObject(model));
 
-      const render = () => {
-        renderer.render(scene, camera);
-      };
+//       const center = boundingBox.getCenter(new THREE.Vector3());
+//       const size = boundingBox.getSize(new THREE.Vector3());
 
-      stlFiles.forEach((stlFile, index) => {
-        loadSTL(stlFile, index);
-      });
+//       loadedModels.forEach((model: any) => {
+//         // Scale the model to fit within a certain size
+//         const scaleFactor = 100 / Math.max(size.x, size.y, size.z);
+//         model.scale.set(scaleFactor, scaleFactor, scaleFactor);
 
-      animate();
-    };
+//         // Position the model at the scene center
+//         model.position.sub(center);
+//       });
+//     };
 
-    mountScene();
+//     function onWindowResize() {
+//       camera.aspect = window.innerWidth / window.innerHeight;
+//       camera.updateProjectionMatrix();
+//       renderer.setSize(window.innerWidth, window.innerHeight);
+//       render();
+//     }
 
-    return () => {
-      if (rendererRef.current && mountRef.current) {
-        // window.removeEventListener('resize', onWindowResize);
-        mountRef.current.removeChild(rendererRef.current.domElement);
-        rendererRef.current.dispose();
-      }
-    };
-  }, [stlFiles]);
+//     window.addEventListener('resize', onWindowResize, false);
 
-  return <div ref={mountRef} />;
-};
+// const stats = new Stats()
+// document.body.appendChild(stats.dom)
+//     const animate = () => {
+//       // Para los frames del Orbit controls.
+//       // SCROLLING O ZOOM IN AND ZOOM OUT
+//       requestAnimationFrame(animate);
 
-export default Scene;
+//       // Element rotation
+//       loadedModels.forEach((model: any)=>
+//         {
+
+//           model.rotation.x += 0.01
+//           model.rotation.y += 0.01
+//         })
+//       controls.update();
+//         stats.update()
+//       render();
+//     };
+
+//     const render = () => {
+//       renderer.render(scene, camera);
+//     };
+
+//     stlFiles.forEach((stlFile, index) => {
+//       loadSTL(stlFile, index);
+//     });
+
+//     animate();
+// // Clean up...
+//     return () => {
+//       window.removeEventListener('resize', onWindowResize);
+//       gui.destroy()
+     
+//       document.body.removeChild(renderer.domElement);
+//     };
+//   }, []);
+
+//   return <div />;
+// };
+
+// export default StlViewer;
